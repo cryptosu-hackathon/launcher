@@ -1,19 +1,42 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
+const { VueLoaderPlugin } = require('vue-loader');
 
 const common = {
-  mode: "production",
+  mode: "development",
   module: {
     rules: [
       {
         test: /\.tsx?$/,
-        use: 'ts-loader',
+        use: {
+          'loader': 'ts-loader',
+          options: {
+            appendTsSuffixTo: [/\.vue$/],
+          },
+        },
         exclude: /node_modules/,
       },
+      {
+        test: /\.vue$/,
+        loader: 'vue-loader'
+      },
+      {
+        test: /\.css$/,
+        use: [
+            'vue-style-loader',
+            'css-loader'
+        ]
+      }
     ],
   },
   resolve: {
-    extensions: ['.tsx', '.ts', '.js'],
+    alias: {
+      'vue': 'vue/dist/vue.esm-bundler.js'
+    },
+    extensions: ['.tsx', '.ts', '.js', '.json', '.vue'],
+  },
+  devServer: {
+    compress: false,
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
@@ -49,7 +72,8 @@ const frontConfig = {
     new HtmlWebpackPlugin({
       template: 'src/front/index.html',
       chunks: ['index']
-    })
+    }),
+    new VueLoaderPlugin()
   ],
 };
 

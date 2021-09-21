@@ -1,7 +1,10 @@
 <html>
 	<head>
-		<meta http-equiv="Content-Security-Policy" content="default-src 'self';">
+		<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval';">
 	</head>
 	<body>
+		<div id="app">
+			<router-view :key="$route.path"></router-view>
+		</div>
 	</body>
 </html>
