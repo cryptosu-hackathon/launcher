@@ -1,10 +1,10 @@
 const Vue = require('vue');
 const VueRouter = require('vue-router')
-import MyComponent from './test.vue'
+import Home from './home.vue'
 import QrCodeView from './qrcode.vue'
 
 const routes = [
-	{ path: '/', component: MyComponent },
+	{ path: '/', name: 'home', component: Home },
 	{ path: '/qrcode', name: 'qrcode', component: QrCodeView, props: true },
 ];
 
@@ -20,8 +20,10 @@ const app = Vue.createApp({
 		this.$router.replace('/');
 		window.ipc.on('qr-code', (arg: any) => {
 			this.$router.push({ name: 'qrcode', params: { code: arg }});
-		})
-		window.ipc.send('qr-code');
+		});
+		window.ipc.on('logged-on', (arg: any) => {
+			this.$router.push({ name: 'home', params: { logged: arg }});
+		});
 	},
 }).use(router);
 
