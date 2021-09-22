@@ -12,6 +12,7 @@ class Web3Session
 		ipcMain.on('web3', (event: any, arg: any) => {
 			if (!this.web3)
 				throw "Web3 session not set up yet.";
+			console.log("query: ", arg);
 			if (arg.query === "balance")
 				event.returnValue = this.getBalance();
 			else

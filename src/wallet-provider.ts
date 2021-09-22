@@ -28,7 +28,7 @@ class WalletProvider
 			console.log("open, URI is " + uri);
 			// NB: the qr-codeification could be done elsewhere but seems fine here.
 			QRCode.toString(uri, { "margin": 0, "type": "svg" }, (err: any, data: any) => {
-				this.onQrCodeCallback(data);
+				this.onQrCodeCallback(uri, data);
 			});
 		});
 
@@ -55,7 +55,7 @@ class WalletProvider
 		return this;
 	}
 
-	onQrCodeDisplay(callback: (svg: string) => any): WalletProvider
+	onQrCodeDisplay(callback: (uri: string, svg: string) => any): WalletProvider
 	{
 		this.onQrCodeCallback = callback;
 		return this;

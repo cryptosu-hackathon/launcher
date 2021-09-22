@@ -33,20 +33,15 @@ const common = {
 				include: [
 					path.resolve(__dirname, "src/front/")
 				],
-			}
+			},
 		],
-	},
-	externalsPresets: {
-		node: true,
 	},
 	resolve: {
 		alias: {
-			'vue': 'vue/dist/vue.esm-bundler.js'
+			'vue': 'vue/dist/vue.esm-bundler.js',
+			'@walletconnect/client': '@walletconnect/client/dist/cjs/index.js'
 		},
-		extensions: ['.tsx', '.ts', '.js', '.json', '.vue'],
-	},
-	devServer: {
-		compress: false,
+		extensions: ['.tsx', '.ts', '.js', '.json', '.vue', '.node'],
 	},
 	output: {
 		path: path.resolve(__dirname, 'dist'),
@@ -59,6 +54,9 @@ const serverConfig = {
 	output: {
 		filename: 'main.js',
 	},
+	externalsPresets: {
+		node: true,
+	},
 };
 
 const preloadConfig = {
@@ -67,10 +65,13 @@ const preloadConfig = {
 	output: {
 		filename: 'preload.js',
 	},
+	externalsPresets: {
+		node: true,
+	},
 };
 
 const frontConfig = {
-	target: 'electron-renderer',
+	target: 'web',
 	entry: {
 		index: './src/front/index.ts'
 	},

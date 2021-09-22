@@ -12,8 +12,8 @@ var mainWindow: BrowserWindow;
 function createWindow()
 {
 	mainWindow = new BrowserWindow({
-		width: 800,
-		height: 600,
+		width: 1200,
+		height: 800,
 		webPreferences: {
 			preload: path.join(glob_path, "preload.js"),
 		},
@@ -21,8 +21,8 @@ function createWindow()
 
 	mainWindow.loadFile(path.join(glob_path, "index.html"));
 
-	// Use navbar
-	// mainWindow.webContents.openDevTools();
+	// Or use navbar
+	mainWindow.webContents.openDevTools();
 }
 
 import Web3Session from './web3-session';
@@ -32,10 +32,10 @@ import WalletProvider from './wallet-provider'
 
 var qrCode: any;
 var provider = new WalletProvider();
-provider.onQrCodeDisplay((svg: string) => {
-		qrCode = svg;
+provider.onQrCodeDisplay((uri: string, svg: string) => {
+		qrCode = { uri, svg };
 		if (mainWindow)
-			mainWindow.webContents.send('qr-code', svg);
+			mainWindow.webContents.send('qr-code', { uri, svg });
 	})
 	.onLogIn(accounts => {
 		const keccak256: any = require("keccak256");
@@ -53,11 +53,15 @@ provider.onQrCodeDisplay((svg: string) => {
 	})
 	.enable();
 
+//import FakeWallet from './fake-wallet/fake-wallet'
+//var fakeWallet = new FakeWallet();
+
 app.on("ready", () => {
 	createWindow();
 	mainWindow.webContents.once('dom-ready', () => {
 		// May be redundant with qrCodeDisplay but that's OK.
 		mainWindow.webContents.send('qr-code', qrCode);
+		//fakeWallet.initWalletConnect(qrCode.uri);
 	});
 
 	app.on("activate", function () {
