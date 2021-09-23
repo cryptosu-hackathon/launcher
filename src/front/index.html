@@ -3,9 +3,6 @@
 		<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' wss: *.wallectconnect.org;">
 	</head>
 	<body>
-		<div id="app">
-			<router-view :key="$route.path"></router-view>
-			<fake-wallet :wallet="this.fakeWallet"></fake-wallet>
-		</div>
+		<div id="app"></div>
 	</body>
 </html>
