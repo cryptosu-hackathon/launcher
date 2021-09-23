@@ -41,6 +41,7 @@ class WalletProvider
 		});
 
 		this.provider.on("chainChanged", (cid: any) => {
+			console.log("chain changed");
 			this.chainId = cid;
 		});
 

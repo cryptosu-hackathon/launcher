@@ -9,12 +9,14 @@ class Web3Session
 	constructor()
 	{
 		// Route all web3 messages here.
-		ipcMain.on('web3', (event: any, arg: any) => {
+		ipcMain.on('web3', async (event: any, arg: any) => {
 			if (!this.web3)
 				throw "Web3 session not set up yet.";
 			console.log("query: ", arg);
 			if (arg.query === "balance")
-				event.returnValue = this.getBalance();
+				event.returnValue = await this.getBalance();
+			else if (arg.query === "sign")
+				event.returnValue = await this.sign(arg.data);
 			else
 				event.returnValue = "";
 		})
@@ -23,16 +25,22 @@ class Web3Session
 	setUp(provider: typeof WalletProvider)
 	{
 		this.provider = provider;
-		this.web3 = new Web3(provider);
+		this.web3 = new Web3(provider.getProvider());
 	}
 
 	async getBalance()
 	{
-		console.log("getting balance");
+		console.log("getting balance of ", this.provider.getAccount());
 		var balance = await this.web3.eth.getBalance(this.provider.getAccount(), "latest");
-		console.log("got");
-		console.log(balance);
-		return balance;
+		return +balance;
+	}
+
+	async sign(data)
+	{
+		console.log("Signing");
+		var res = await this.web3.eth.sign(data, this.provider.getAccount());
+		console.log("got", res);
+		return res;
 	}
 }
 

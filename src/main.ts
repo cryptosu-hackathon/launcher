@@ -39,7 +39,7 @@ provider.onQrCodeDisplay((uri: string, svg: string) => {
 	})
 	.onLogIn(accounts => {
 		const keccak256: any = require("keccak256");
-		web3session.setUp(provider.getProvider());
+		web3session.setUp(provider);
 		// no need to check, qrCode step requires the window to be setup
 		mainWindow.webContents.send('logged-on', true);
 		/*

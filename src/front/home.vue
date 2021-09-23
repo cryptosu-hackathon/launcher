@@ -3,7 +3,7 @@
 		<h1>CryptOsu! Launcher</h1>
 		<template v-if="logged">
 			<p>Logged on!</p>
-			<p>Your ETH balance is currently {{ window.ipc.send('web3', { 'query': 'balance' }) }}</p>
+			<p>Your ETH balance is currently {{ this.ipc.sendSync('web3', { 'query': 'balance' }) }}</p>
 		</template>
 	</div>
 </template>
@@ -12,9 +12,14 @@
 import { defineComponent } from 'vue'
 export default defineComponent({
 	data () {
-		return {}
+		return {
+		}
 	},
-	props: ['logged']
+	props: ['logged'],
+	mounted() {
+		if (this.logged)
+			this.ipc.send('web3', { query: 'sign', data: 'toto' });
+	},
 });
 </script>
 
