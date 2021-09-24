@@ -1,6 +1,5 @@
 <template>
 	<div>
-		<h1>CryptOsu! Launcher</h1>
 		<template v-if="logged">
 			<p>Logged on!</p>
 			<p>Your ETH balance is currently {{ this.ipc.sendSync('web3', { 'query': 'balance' }) }}</p>

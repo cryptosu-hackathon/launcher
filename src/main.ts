@@ -22,7 +22,7 @@ function createWindow()
 	mainWindow.loadFile(path.join(glob_path, "index.html"));
 
 	// Or use navbar
-	mainWindow.webContents.openDevTools();
+	// mainWindow.webContents.openDevTools();
 }
 
 import Web3Session from './web3-session';

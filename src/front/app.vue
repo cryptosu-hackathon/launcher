@@ -1,4 +1,5 @@
 <template>
+	<h1>CryptOsu! Launcher</h1>
 	<router-view :key="$route.path"></router-view>
 	<fake-wallet :wallet="this.fakeWallet"></fake-wallet>
 </template>
