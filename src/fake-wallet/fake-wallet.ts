@@ -13,6 +13,8 @@ class FakeWallet
 	connector: WalletConnect | undefined;
 	peerData: any;
 
+	pending: any;
+
 	async initWalletConnect(uri: string)
 	{
 		try {
@@ -40,12 +42,10 @@ class FakeWallet
 			this.peerData = payload.params[0];
 			console.log("SESSION_REQUEST from ", this.peerData);
 
-
-			this.connector.approveSession({
-				chainId: 1,
-				// random fake address to make web3 happy.
-				accounts: ["0x80d60bB57008d4cab28f4F28211DC7fE8Aea94fe"]
-			});
+			this.pending = {
+				type: "session_request",
+				action: new Promise((r, e) => {})
+			}
 		});
 
 		this.connector.on("session_update", error => {
@@ -62,20 +62,11 @@ class FakeWallet
 			if (error)
 				throw error;
 
-			try {
-				var ret = this.answerQuery(payload.method, payload.params);
-				this.connector.approveRequest({
-					id: payload.id,
-					result: ret,
-				});
-			}
-			catch(e)
-			{
-				this.connector.rejectRequest({
-					id: payload.id,
-					error: { message: "There was an error processing the request." },
-				});
-			}
+			this.pending = {
+				type: payload.method,
+				data: payload.params,
+				id: payload.id
+			};
 		});
 
 		this.connector.on("connect", (error, payload) => {
@@ -93,8 +84,58 @@ class FakeWallet
 		});
 	}
 
+	async approvePending()
+	{
+		if (this.pending?.type === "session_request")
+			this.approveSession();
+		else
+		{
+			try {
+				var ret = this.answerQuery(this.pending.type, this.pending.data);
+				this.connector.approveRequest({
+					id: this.pending.id,
+					result: ret,
+				});
+			}
+			catch(e)
+			{
+				this.connector.rejectRequest({
+					id: this.pending.id,
+					error: { message: "There was an error processing the request." },
+				});
+			}
+		}
+		this.pending = undefined;
+	}
+
+	rejectPending()
+	{
+		if (this.pending?.type === "session_request")
+			this.connector.rejectSession();
+		else
+		{
+			this.connector.rejectRequest({
+				id: this.pending.id
+			})
+		}
+		this.pending = undefined;
+	}
+
+	/**
+	 * Approve connection request via WalletConnect, return chain ID & accounts.
+	 * Defaults to a random valid & unused ETH address.
+	 */
+	approveSession(chainId: number = 1, accounts: string[] = ["0x80d60bB57008d4cab28f4F28211DC7fE8Aea94fe"])
+	{
+		this.connector.approveSession({
+			chainId,
+			accounts
+		});
+	}
+
 	answerQuery(method: string, params: any): any
 	{
+		console.log(method, params);
 		if (method === "eth_sign")
 		{
 			// Param 0 is adress, param 1 is data
